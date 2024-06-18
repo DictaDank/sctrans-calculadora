@@ -18,8 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const pueblosDatalist = document.getElementById('pueblos');
             pueblos.forEach(pueblo => {
                 const option = document.createElement('option');
-                option.value = pueblo.km;
-                option.textContent = `${pueblo.nombre} - ${pueblo.km} km`;
+                option.value = `${pueblo.nombre} - ${pueblo.km} km`;
                 pueblosDatalist.appendChild(option);
             });
         });
@@ -28,45 +27,51 @@ document.addEventListener('DOMContentLoaded', function() {
 document.getElementById('priceForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const distance = parseFloat(document.getElementById('distance').value);
+    const distanceInput = document.getElementById('distance').value;
+    const distanceMatch = distanceInput.match(/(\d+) km$/);
+    const distance = distanceMatch ? parseFloat(distanceMatch[1]) : parseFloat(distanceInput);
+
+    if (isNaN(distance)) {
+        alert("Por favor, ingrese una distancia válida.");
+        return;
+    }
+
     const weight = parseFloat(document.getElementById('weight').value);
     const volume = parseFloat(document.getElementById('volume').value);
     const isAdr = document.getElementById('adr').checked;
     const isPuertaElevadora = document.getElementById('puertaElevadora').checked;
 
-    let basePrice = calculatePrice(distance, weight, volume, isAdr, isPuertaElevadora);
+    let basePrice = calculatePrice(distance, weight, volume);
     let adrCost = isAdr ? basePrice * 0.3 : 0.0;
-    let totalPrice = basePrice;
+    let puertaElevadoraCost = 0.0;
 
-    document.getElementById('result').textContent = `Precio sin ADR: ${basePrice.toFixed(2)} € - Costo ADR: ${adrCost.toFixed(2)} € - Precio total: ${totalPrice.toFixed(2)} €`;
+    if (isPuertaElevadora) {
+        if (weight <= 1500) {
+            puertaElevadoraCost = 17.34;
+        } else if (weight <= 3000) {
+            puertaElevadoraCost = 34.68;
+        } else {
+            puertaElevadoraCost = 52.02;
+        }
+    }
 
-    addHistory(distance, weight, volume, isAdr, isPuertaElevadora, basePrice, adrCost, totalPrice);
+    document.getElementById('result').textContent = `Precio sin ADR: ${basePrice.toFixed(2)} € - Costo ADR: ${adrCost.toFixed(2)} € - Costo Puerta Elevadora: ${puertaElevadoraCost.toFixed(2)} € - Precio total: ${basePrice.toFixed(2)} €`;
+
+    addHistory(distance, weight, volume, isAdr, isPuertaElevadora, basePrice, adrCost, puertaElevadoraCost, basePrice);
 });
 
 document.getElementById('clearHistory').addEventListener('click', function() {
     document.getElementById('historyBody').innerHTML = '';
 });
 
-function calculatePrice(distance, weight, volume, isAdr, isPuertaElevadora) {
+function calculatePrice(distance, weight, volume) {
     let cubicWeight = volume * 270;
     let finalWeight = Math.max(weight, cubicWeight);
 
     let distanceIndex = findIndex(DISTANCE_RANGES, distance);
     let weightIndex = findIndex(WEIGHT_RANGES, finalWeight);
 
-    let basePrice = PRICES[distanceIndex][weightIndex];
-
-    if (isPuertaElevadora) {
-        if (finalWeight <= 1500) {
-            basePrice = 17.34;
-        } else if (finalWeight <= 3000) {
-            basePrice = 34.68;
-        } else {
-            basePrice = 52.02;
-        }
-    }
-
-    return basePrice;
+    return PRICES[distanceIndex][weightIndex];
 }
 
 function findIndex(ranges, value) {
@@ -78,7 +83,7 @@ function findIndex(ranges, value) {
     return ranges.length - 1;
 }
 
-function addHistory(distance, weight, volume, isAdr, isPuertaElevadora, basePrice, adrCost, totalPrice) {
+function addHistory(distance, weight, volume, isAdr, isPuertaElevadora, basePrice, adrCost, puertaElevadoraCost, totalPrice) {
     const historyBody = document.getElementById('historyBody');
     const row = document.createElement('tr');
 
@@ -90,11 +95,11 @@ function addHistory(distance, weight, volume, isAdr, isPuertaElevadora, basePric
         <td>${distance}</td>
         <td>${weight}</td>
         <td>${volume}</td>
-        <td>${cubicWeight}</td>
+        <td>${cubicWeight.toFixed(2)}</td>
         <td>${usedValue}</td>
         <td>${adrCost.toFixed(2)}</td>
-        <td>${isPuertaElevadora ? basePrice.toFixed(2) : 0}</td>
-        <td>${totalPrice.toFixed(2)}</td>
+        <td>${puertaElevadoraCost.toFixed(2)}</td>
+        <td>${basePrice.toFixed(2)}</td>
     `;
 
     historyBody.appendChild(row);
