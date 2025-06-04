@@ -11,21 +11,22 @@ const PRICES = [
     [208.11, 208.11, 223.14, 223.14, 223.14, 223.14, 231.23, 231.23, 231.23, 242.79, 242.79, 260.25, 260.25, 277.48, 300.6, 375.76, 446.15]
 ];
 
-document.addEventListener('DOMContentLoaded', function() {
-    fetch('pueblos.json')
-        .then(response => response.json())
-        .then(pueblos => {
-            const pueblosDatalist = document.getElementById('pueblos');
-            pueblos.forEach(pueblo => {
-                const option = document.createElement('option');
-                option.value = `${pueblo.nombre} - ${pueblo.km} km`;
-                pueblosDatalist.appendChild(option);
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('pueblos.json')
+            .then(response => response.json())
+            .then(pueblos => {
+                const pueblosDatalist = document.getElementById('pueblos');
+                pueblos.forEach(pueblo => {
+                    const option = document.createElement('option');
+                    option.value = `${pueblo.nombre} - ${pueblo.km} km`;
+                    pueblosDatalist.appendChild(option);
+                });
             });
-        });
-});
+    });
 
-document.getElementById('priceForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+    document.getElementById('priceForm').addEventListener('submit', function(event) {
+        event.preventDefault();
 
     const distanceInput = document.getElementById('distance').value;
     const distanceMatch = distanceInput.match(/(\d+) km$/);
@@ -57,12 +58,13 @@ document.getElementById('priceForm').addEventListener('submit', function(event) 
 
     document.getElementById('result').textContent = `Precio sin ADR: ${basePrice.toFixed(2)} € - Costo ADR: ${adrCost.toFixed(2)} € - Costo Puerta Elevadora: ${puertaElevadoraCost.toFixed(2)} € - Precio total: ${basePrice.toFixed(2)} €`;
 
-    addHistory(distance, weight, volume, isAdr, isPuertaElevadora, basePrice, adrCost, puertaElevadoraCost, basePrice);
+addHistory(distance, weight, volume, isAdr, isPuertaElevadora, basePrice, adrCost, puertaElevadoraCost, basePrice);
 });
 
-document.getElementById('clearHistory').addEventListener('click', function() {
-    document.getElementById('historyBody').innerHTML = '';
-});
+    document.getElementById('clearHistory').addEventListener('click', function() {
+        document.getElementById('historyBody').innerHTML = '';
+    });
+}
 
 function calculatePrice(distance, weight, volume) {
     let cubicWeight = volume * 270;
@@ -103,4 +105,8 @@ function addHistory(distance, weight, volume, isAdr, isPuertaElevadora, basePric
     `;
 
     historyBody.appendChild(row);
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { calculatePrice, PRICES };
 }
