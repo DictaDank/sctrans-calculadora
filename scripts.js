@@ -55,9 +55,11 @@ document.getElementById('priceForm').addEventListener('submit', function(event) 
         }
     }
 
-    document.getElementById('result').textContent = `Precio sin ADR: ${basePrice.toFixed(2)} € - Costo ADR: ${adrCost.toFixed(2)} € - Costo Puerta Elevadora: ${puertaElevadoraCost.toFixed(2)} € - Precio total: ${basePrice.toFixed(2)} €`;
+    const totalPrice = basePrice + adrCost + puertaElevadoraCost;
 
-    addHistory(distance, weight, volume, isAdr, isPuertaElevadora, basePrice, adrCost, puertaElevadoraCost, basePrice);
+    document.getElementById('result').textContent = `Precio sin ADR: ${basePrice.toFixed(2)} € - Costo ADR: ${adrCost.toFixed(2)} € - Costo Puerta Elevadora: ${puertaElevadoraCost.toFixed(2)} € - Precio total: ${totalPrice.toFixed(2)} €`;
+
+    addHistory(distance, weight, volume, isAdr, isPuertaElevadora, basePrice, adrCost, puertaElevadoraCost, totalPrice);
 });
 
 document.getElementById('clearHistory').addEventListener('click', function() {
@@ -99,7 +101,7 @@ function addHistory(distance, weight, volume, isAdr, isPuertaElevadora, basePric
         <td>${usedValue}</td>
         <td>${adrCost.toFixed(2)}</td>
         <td>${puertaElevadoraCost.toFixed(2)}</td>
-        <td>${basePrice.toFixed(2)}</td>
+        <td>${totalPrice.toFixed(2)}</td>
     `;
 
     historyBody.appendChild(row);
