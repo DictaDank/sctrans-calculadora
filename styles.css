@@ -113,3 +113,13 @@ footer {
     color: #fafafa;
     font-family: 'Arial', sans-serif;
 }
+
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+    }
+
+    .col-md-6 {
+        width: 100%;
+    }
+}
