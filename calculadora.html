@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cliente SCTRANS</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Cliente SCTRANS</h1>
+        <img src="logo.png" alt="Logo" class="logo">    
+        <div class="row">
+            <!-- Formulario -->
+            <div class="col-md-6">
+                <form id="priceForm">
+                    <div class="form-group">
+                        <label for="distance">Distancia (km):</label>
+                        <input list="pueblos" id="distance" name="distance" required>
+                        <datalist id="pueblos"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Peso (kg):</label>
+                        <input type="number" id="weight" name="weight" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="volume">Metros Cúbicos:</label>
+                        <input type="number" id="volume" name="volume" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adr">ADR:</label>
+                        <input type="checkbox" id="adr" name="adr">
+                    </div>
+                    <div class="form-group">
+                        <label for="puertaElevadora">Puerta Elevadora:</label>
+                        <input type="checkbox" id="puertaElevadora" name="puertaElevadora">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Calcular</button>
+                </form>
+                <div id="result"></div>
+            </div>
+
+
+            <!-- Historial -->
+            <div class="col-md-6">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Distancia</th>
+                            <th>Peso</th>
+                            <th>Metros Cúbicos</th>
+                            <th>Cubicaje x 270</th>
+                            <th>Valor Usado</th>
+                            <th>ADR</th>
+                            <th>Puerta Elevadora</th>
+                            <th>Costo Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <!-- Aquí se agregarán las filas del historial -->
+                    </tbody>
+                </table>
+                <button id="clearHistory" class="btn btn-danger">Limpiar Historial</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Duvan Guzman. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>

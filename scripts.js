@@ -22,6 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 pueblosDatalist.appendChild(option);
             });
         });
+
+    // Cargar historial guardado
+    loadHistory();
 });
 
 document.getElementById('priceForm').addEventListener('submit', function(event) {
@@ -64,6 +67,7 @@ document.getElementById('priceForm').addEventListener('submit', function(event) 
 
 document.getElementById('clearHistory').addEventListener('click', function() {
     document.getElementById('historyBody').innerHTML = '';
+    localStorage.removeItem('priceHistory');
 });
 
 function calculatePrice(distance, weight, volume) {
@@ -86,23 +90,40 @@ function findIndex(ranges, value) {
 }
 
 function addHistory(distance, weight, volume, isAdr, isPuertaElevadora, basePrice, adrCost, puertaElevadoraCost, totalPrice) {
+    const data = { distance, weight, volume, isAdr, isPuertaElevadora, basePrice, adrCost, puertaElevadoraCost, totalPrice };
     const historyBody = document.getElementById('historyBody');
+    addHistoryRow(historyBody, data);
+    saveHistoryRow(data);
+}
+
+function addHistoryRow(historyBody, data) {
     const row = document.createElement('tr');
 
-    let cubicWeight = volume * 270;
-    let usedWeight = Math.max(weight, cubicWeight);
-    let usedValue = weight > cubicWeight ? "Peso" : "Metros Cúbicos";
+    let cubicWeight = data.volume * 270;
+    let usedValue = data.weight > cubicWeight ? "Peso" : "Metros Cúbicos";
 
     row.innerHTML = `
-        <td>${distance}</td>
-        <td>${weight}</td>
-        <td>${volume}</td>
+        <td>${data.distance}</td>
+        <td>${data.weight}</td>
+        <td>${data.volume}</td>
         <td>${cubicWeight.toFixed(2)}</td>
         <td>${usedValue}</td>
-        <td>${adrCost.toFixed(2)}</td>
-        <td>${puertaElevadoraCost.toFixed(2)}</td>
-        <td>${totalPrice.toFixed(2)}</td>
+        <td>${data.adrCost.toFixed(2)}</td>
+        <td>${data.puertaElevadoraCost.toFixed(2)}</td>
+        <td>${data.totalPrice.toFixed(2)}</td>
     `;
 
     historyBody.appendChild(row);
+}
+
+function saveHistoryRow(data) {
+    const history = JSON.parse(localStorage.getItem('priceHistory') || '[]');
+    history.push(data);
+    localStorage.setItem('priceHistory', JSON.stringify(history));
+}
+
+function loadHistory() {
+    const history = JSON.parse(localStorage.getItem('priceHistory') || '[]');
+    const historyBody = document.getElementById('historyBody');
+    history.forEach(entry => addHistoryRow(historyBody, entry));
 }
